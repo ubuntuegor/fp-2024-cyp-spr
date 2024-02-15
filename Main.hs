@@ -5,11 +5,25 @@ import Text.Printf (printf)
 
 ageOn :: String -> Float -> Float
 ageOn planet ageInSeconds =
-  undefined
+  ageInSeconds / (60 * 60 * 24 * 365.25) / yearLengthOnPlanet
+  where
+    yearLengthOnPlanet =
+      case planet of
+        "Mercury" -> 0.2408467
+        "Venus" -> 0.61519726
+        "Earth" -> 1
+        "Mars" -> 1.8808158
+        "Jupiter" -> 11.862615
+        "Saturn" -> 29.447498
+        "Uranus" -> 84.016846
+        "Neptune" -> 164.79132
+        "Pluto" -> error "Sorry, Pluto is not a planet"
+        _ -> error "Provide a capitalized name of a planet in the Solar System"
+        
 
 isLeapYear :: Int -> Bool
 isLeapYear year =
-  undefined
+  year `mod` 4 == 0 && (year `mod` 100 /= 0 || year `mod` 400 == 0)
 
 main = do 
   runTests

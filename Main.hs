@@ -1,116 +1,81 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use foldr" #-}
 module Main where
 
-import Control.Monad (unless)
 import Text.Printf (printf)
+import Control.Monad (unless)
+import Data.List (sort)
 
-ageOn :: String -> Float -> Float
-ageOn planet ageInSeconds =
-  undefined
+quickSort :: [Int] -> [Int]
+quickSort = undefined 
 
-isLeapYear :: Int -> Bool
-isLeapYear year =
-  undefined
+map' :: (a -> b) -> [a] -> [b]
+map' = undefined 
 
-main = do 
+concatMap' :: (a -> [b]) -> [a] -> [b]
+concatMap' = undefined 
+
+positions :: (a -> Bool) -> [a] -> [Int]
+positions = undefined 
+
+main = do
   runTests
   putStrLn "Done"
 
 runTests = do
-    runAgeOnTests
-    runIsLeapYearTests
+    runTestMap
+    runTestConcatMap
+    runTestQuickSort
+    runTestPositions
   where
-    describeFailure functionName errorMsg input exp actual = 
-      printf "Test for a function %s has failed:\n  %s\n  Input: %s\n  Expected: %s\n  But got: %s\n" 
-             functionName 
-             errorMsg 
-             (show input) 
-             (show exp) 
+    describeFailure :: (Show a, Show b) => String -> String -> a -> b -> b -> IO ()
+    describeFailure functionName errorMsg input exp actual =
+      putStrLn $
+      printf "Test for a function %s has failed:\n  %s\n  Input: %s\n  Expected: %s\n  But got: %s\n"
+             functionName
+             errorMsg
+             (show input)
+             (show exp)
              (show actual)
 
-    runAgeOnTests =
-        mapM_ test cases
+    runTestMap = do
+        test "+2" (+2) [0..10]
+        test "*3" (*3) ([] :: [Int])
+        test "show" show [1.1, 2.2, 3.3, 4.4, 5.5]
+        test "even . abs" (even . abs) [0, -1, 2, -3, 4, -5, 6]
       where
-        test (planet, seconds, exp) = 
-            let actual = ageOn planet seconds in 
-            unless (actual `isEqual` exp) $ describeFailure "ageOn" (printf "Wrong age on planet %s" planet :: String) seconds exp actual
-          where 
-            isEqual x y = roundTo 2 x == roundTo 2 y
-            roundTo n = (/ 10 ^ n) . fromIntegral . round . (* 10 ^ n) 
-        cases = [ ( "Earth"
-                  , 1000000000
-                  , 31.69
-                  )
-                , ( "Mercury"
-                  , 2134835688
-                  , 280.88
-                  )
-                , ( "Venus"
-                  , 189839836
-                  , 9.78
-                  )
-                , ( "Mars"
-                  , 2129871239
-                  , 35.88
-                  )
-                , ( "Jupiter"
-                  , 901876382
-                  , 2.41
-                  )
-                , ( "Saturn"
-                  , 2000000000
-                  , 2.15
-                  )
-                , ( "Uranus"
-                  , 1210123456
-                  , 0.46
-                  )
-                , ( "Neptune"
-                  , 1821023456
-                  , 0.35
-                  )
-                ]
+        test fRepr f xs =
+          let act = map' f xs in
+          let exp = map f xs in
+          unless (act == exp) $ describeFailure "map'" (printf "map' (%s)" fRepr) xs exp act
 
-    runIsLeapYearTests =
-        mapM_ test cases
+    runTestConcatMap = do
+        test ":[]" (:[]) ([] :: [Int])
+        test ":[]" (:[]) [0..10]
+        test "words" words ["a a a a", "b b b", "c"]
+        test "replicate n n" (\n -> replicate n n) [0..10]
       where
-        test (errorMsg, input, exp) =
-          let actual = isLeapYear input in 
-          unless (actual == exp) $ describeFailure "isLeapYear" errorMsg input exp actual
-         
-        cases = [ ( "year not divisible by 4 in common year"
-                  , 2015
-                  , False
-                  )
-                , ( "year divisible by 2, not divisible by 4 in common year"
-                  , 1970
-                  , False
-                  )
-                , ( "year divisible by 4, not divisible by 100 in leap year"
-                  , 1996
-                  , True
-                  )
-                , ( "year divisible by 4 and 5 is still a leap year"
-                  , 1960
-                  , True
-                  )
-                , ( "year divisible by 100, not divisible by 400 in common year"
-                  , 2100
-                  , False
-                  )
-                , ( "year divisible by 100 but not by 3 is still not a leap year"
-                  , 1900
-                  , False
-                  )
-                , ( "year divisible by 400 in leap year"
-                  , 2000
-                  , True
-                  )
-                , ( "year divisible by 400 but not by 125 is still a leap year"
-                  , 2400
-                  , True
-                  )
-                , ( "year divisible by 200, not divisible by 400 in common year"
-                  , 1800
-                  , False
-                  )
-                ]
+        test fRepr f xs =
+          let act = concatMap' f xs in
+          let exp = concatMap f xs in
+          unless (act == exp) $ describeFailure "concatMap'" (printf "concatMap' (%s)" fRepr) xs exp act
+
+    runTestQuickSort = do 
+        test [] 
+        test [0 .. 10] 
+        test [-10, -9 .. 10]
+      where 
+        test xs = 
+          let act = quickSort xs in 
+          let exp = sort xs in 
+          unless (act == exp) $ describeFailure "quickSort" "" xs exp act
+
+    runTestPositions = do 
+        test "even" even [] [] 
+        test "even" even [0..10] [0,2..10] 
+        test "==0" (==0) [0,1,0,0,1,1,0] [0,2,3,6]
+        test "\\xs -> length xs `mod` 3 == 2" ((==2) . (`mod` 3) . length) [replicate x x | x <- [0..10]] [2,5..10]
+      where  
+        test fRepr f xs exp = 
+          let act = positions f xs in 
+          unless (act == exp) $ describeFailure "positions" (printf "positions (%s)" $ show xs) xs exp act

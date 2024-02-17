@@ -1,29 +1,18 @@
-# HW01
-## Deadline: beginning of the class on Friday
+# HW02
+## Deadline: 23:59 20.02.2024
 
-1. Given an age in seconds, calculate how old (in years) someone would be on a different planet. Implement a function `ageOn planet ageInSeconds` which returns the age in years represented as a floating point number of type `Float`. Planet name is a `String`, case sensitive. An error should be reported if an unrecognised planet is passed into. If someone tried to find their age on Pluto, explain to them that it's not a planet. 
+1. Implement (not so quick) `quicksort :: [Int] -> [Int]`.
+   * Naive recursive implementation is fine, don't try to make it run in `O(n*(log n))`
 
-   * Mercury: orbital period 0.2408467 Earth years
-   * Venus: orbital period 0.61519726 Earth years
-   * Earth: orbital period 1.0 Earth years, 365.25 Earth days, or 31557600 seconds
-   * Mars: orbital period 1.8808158 Earth years
-   * Jupiter: orbital period 11.862615 Earth years
-   * Saturn: orbital period 29.447498 Earth years
-   * Uranus: orbital period 84.016846 Earth years
-   * Neptune: orbital period 164.79132 Earth years
+2. Implement `map' :: (a -> b) -> [a] -> [b]` using a fold. 
+   * It should behave exactly like the `map` from `Prelude`. 
 
-2. Given a year, report if it is a leap year (function `isLeapYear year`). A leap year in the Gregorian calendar occurs:
+3. Implement `concatMap' :: (a -> [b]) -> [a] -> [b]` which is equivalent to concatenating all the lists produced by applying the function to every element of the input list. 
+   * `concatMap words ["a a a a", "b b b", "c"] == ["a","a","a","a","b","b","b","c"]`
 
-   * on every year that is evenly divisible by 4
-   * except every year that is evenly divisible by 100
-   * unless the year is also evenly divisible by 400
+4. Implement `positions :: (a -> Bool) -> [a] -> [Int]` which finds all indices of elements of the input list for which the predicate holds.
+   * `positions (==0) [0,1,0,0,1,1,0] == [0, 2, 3, 6]`
 
-   For example, 1997 is not a leap year, but 1996 is. 1900 is not a leap year, but 2000 is. Report an error, if the year is negative. 
+If you have enough energy, pick any of the functions and implement it in as many ways as you can come up with. 
 
-## Notes 
-
-* Make a fork of this repository and checkout the branch `HW01`.
-* Write your code in the `Main.hs` file: replace `undefined` with your definitions.
-* Make sure that your tests pass, i.e. running `main` (or `./Main`) only outputs `Done`.
-* If you need more tests, add them, but don't delete the ones which are already in the file. 
-* When finished, open a pull request into the main repo. Make sure to put your name in the title of the PR.  
+Make sure that running main results in a single word `Done`. 

@@ -7,7 +7,7 @@ import Control.Monad (unless)
 import Data.List (sort)
 
 quickSort :: [Int] -> [Int]
-quickSort = undefined 
+quickSort = id 
 
 map' :: (a -> b) -> [a] -> [b]
 map' = undefined 
@@ -62,8 +62,8 @@ runTests = do
 
     runTestQuickSort = do 
         test [] 
-        test [0 .. 10] 
-        test [-10, -9 .. 10]
+        test [10, 9 .. 0] 
+        test [ if even x then negate x else x | x <- [0..10] ]
       where 
         test xs = 
           let act = quickSort xs in 

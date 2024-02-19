@@ -22,8 +22,9 @@ ageOn planet ageInSeconds =
         
 
 isLeapYear :: Int -> Bool
-isLeapYear year =
-  year `mod` 4 == 0 && (year `mod` 100 /= 0 || year `mod` 400 == 0)
+isLeapYear year
+  | year < 0 = error "Year cannot be negative"
+  | otherwise = year `mod` 4 == 0 && (year `mod` 100 /= 0 || year `mod` 400 == 0)
 
 main = do 
   runTests

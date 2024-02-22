@@ -67,7 +67,8 @@ cases =
     (Add (Number 2) (Number 4), Right 6),
     (Mul (Add (Number 2) (Number 2)) (Number 2), Right 8),
     (Div (Number 10) (Number 0), Left ZeroDivision),
-    (Sqrt (Sub (Number 3) (Number 10)), Left RootOfNegative)
+    (Sqrt (Sub (Number 3) (Number 10)), Left RootOfNegative),
+    (Add (Sub (Number 3) (Number 90)) (Div (Number 30) (Sub (Number 10) (Number 10))), Left ZeroDivision)
   ]
 
 test :: Expr -> Either Error Double -> IO () 

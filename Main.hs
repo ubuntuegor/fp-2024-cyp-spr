@@ -105,42 +105,36 @@ test expr expected =
 
 simplify :: (Floating a, Eq a) => Expr a -> Expr a
 simplify (Sqrt x) =
-  let x' = simplify x
-   in case x' of
-        Number 0 -> Number 0
-        Number 1 -> Number 1
-        _ -> Sqrt x'
+  case simplify x of
+    Number 0 -> Number 0
+    Number 1 -> Number 1
+    x -> Sqrt x
 simplify (Add lhs rhs) =
-  let lhs' = simplify lhs; rhs' = simplify rhs
-   in case (lhs', rhs') of
-        (Number 0, _) -> rhs'
-        (_, Number 0) -> lhs'
-        _ -> Add lhs' rhs'
+  case (simplify lhs, simplify rhs) of
+        (Number 0, rhs) -> rhs
+        (lhs, Number 0) -> lhs
+        (lhs, rhs) -> Add lhs rhs
 simplify (Sub lhs rhs) =
-  let lhs' = simplify lhs; rhs' = simplify rhs
-   in case (lhs', rhs') of
-        (_, Number 0) -> lhs'
-        _ -> Sub lhs' rhs'
+  case (simplify lhs, simplify rhs) of
+        (lhs, Number 0) -> lhs
+        (lhs, rhs) -> Sub lhs rhs
 simplify (Mul lhs rhs) =
-  let lhs' = simplify lhs; rhs' = simplify rhs
-   in case (lhs', rhs') of
+  case (simplify lhs, simplify rhs) of
         (Number 0, _) -> Number 0
         (_, Number 0) -> Number 0
-        (Number 1, _) -> rhs'
-        (_, Number 1) -> lhs'
-        _ -> Mul lhs' rhs'
+        (Number 1, rhs) -> rhs
+        (lhs, Number 1) -> lhs
+        (lhs, rhs) -> Mul lhs rhs
 simplify (Div lhs rhs) =
-  let lhs' = simplify lhs; rhs' = simplify rhs
-   in case (lhs', rhs') of
-        (_, Number 1) -> lhs'
-        _ -> Div lhs' rhs'
+  case (simplify lhs, simplify rhs) of
+        (lhs, Number 1) -> lhs
+        (lhs, rhs) -> Div lhs rhs
 simplify (Pow lhs rhs) =
-  let lhs' = simplify lhs; rhs' = simplify rhs
-   in case (lhs', rhs') of
+  case (simplify lhs, simplify rhs) of
         (_, Number 0) -> Number 1
-        (_, Number 1) -> lhs'
+        (lhs, Number 1) -> lhs
         (Number 1, _) -> Number 1
-        _ -> Pow lhs' rhs'
+        (lhs, rhs) -> Pow lhs rhs
 simplify x = x
 
 simplifyRegressCases = map (\(c, a) -> (simplify c, a)) cases
@@ -159,7 +153,10 @@ simplifyCases =
     (Pow (Number 39) (Number 1), Number 39),
     (Pow (Number 39) (Number 0), Number 1),
     (Pow (Number 1) (Number 39), Number 1),
-    (Add (Number 39) (Mul (Number 42) (Number 0)), Number 39)
+    (Add (Number 39) (Mul (Number 42) (Number 0)), Number 39),
+    (Add (Number 1) (Number 39), Add (Number 1) (Number 39)),
+    (Mul (Add (Var "two") (Number 2)) (Number 2), Mul (Add (Var "two") (Number 2)) (Number 2)),
+    (Add (Sub (Number 3) (Number 90)) (Div (Number 30) (Add (Number 10) (Number (-10)))), Add (Sub (Number 3) (Number 90)) (Div (Number 30) (Add (Number 10) (Number (-10)))))
   ]
 
 testSimplify :: (Floating a, Eq a, Show a) => Expr a -> Expr a -> IO ()

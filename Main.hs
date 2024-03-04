@@ -84,12 +84,12 @@ cases =
   [ (Number 2, Right 2),
     (Var "answer", Right 42),
     (Var "undefined", Left (UnknownVariable "undefined")),
-    (Add (Number 2) (Number 4), Right 6),
-    (Sub (Number 2) (Number 4), Right (-2)),
-    (Mul (Number 2) (Number 4), Right 8),
-    (Div (Number 2) (Number 4), Right 0.5),
-    (Pow (Number 2) (Number 4), Right 16),
-    (Mul (Add (Number 2) (Number 2)) (Number 2), Right 8),
+    (Add (Var "two") (Number 4), Right 6),
+    (Sub (Var "two") (Number 4), Right (-2)),
+    (Mul (Var "two") (Number 4), Right 8),
+    (Div (Var "two") (Number 4), Right 0.5),
+    (Pow (Var "two") (Number 4), Right 16),
+    (Mul (Add (Var "two") (Number 2)) (Number 2), Right 8),
     (Div (Number 10) (Number 0), Left ZeroDivision),
     (Sqrt (Sub (Number 3) (Number 10)), Left RootOfNegative),
     (Add (Sub (Number 3) (Number 90)) (Div (Number 30) (Sub (Number 10) (Number 10))), Left ZeroDivision)
@@ -97,7 +97,7 @@ cases =
 
 test :: (Floating a, Ord a, Show a) => Expr a -> Either Error a -> IO ()
 test expr expected =
-  let actual = eval expr [("answer", 42), ("wrongAnswer", 39)]
+  let actual = eval expr [("answer", 42), ("wrongAnswer", 39), ("two", 2)]
    in unless (expected == actual) $ describeFailure actual
   where
     describeFailure actual =
@@ -189,3 +189,7 @@ main = do
   mapM_ (uncurry test) cases
   mapM_ (uncurry test) simplifyRegressCases
   mapM_ (uncurry testSimplify) simplifyCases
+
+bruh x = case x of
+  Add (Number 1) (Number 2) -> True
+  _ -> False

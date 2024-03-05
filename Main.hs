@@ -111,30 +111,30 @@ simplify (Sqrt x) =
     x -> Sqrt x
 simplify (Add lhs rhs) =
   case (simplify lhs, simplify rhs) of
-        (Number 0, rhs) -> rhs
-        (lhs, Number 0) -> lhs
-        (lhs, rhs) -> Add lhs rhs
+    (Number 0, rhs) -> rhs
+    (lhs, Number 0) -> lhs
+    (lhs, rhs) -> Add lhs rhs
 simplify (Sub lhs rhs) =
   case (simplify lhs, simplify rhs) of
-        (lhs, Number 0) -> lhs
-        (lhs, rhs) -> Sub lhs rhs
+    (lhs, Number 0) -> lhs
+    (lhs, rhs) -> Sub lhs rhs
 simplify (Mul lhs rhs) =
   case (simplify lhs, simplify rhs) of
-        (Number 0, _) -> Number 0
-        (_, Number 0) -> Number 0
-        (Number 1, rhs) -> rhs
-        (lhs, Number 1) -> lhs
-        (lhs, rhs) -> Mul lhs rhs
+    (Number 0, _) -> Number 0
+    (_, Number 0) -> Number 0
+    (Number 1, rhs) -> rhs
+    (lhs, Number 1) -> lhs
+    (lhs, rhs) -> Mul lhs rhs
 simplify (Div lhs rhs) =
   case (simplify lhs, simplify rhs) of
-        (lhs, Number 1) -> lhs
-        (lhs, rhs) -> Div lhs rhs
+    (lhs, Number 1) -> lhs
+    (lhs, rhs) -> Div lhs rhs
 simplify (Pow lhs rhs) =
   case (simplify lhs, simplify rhs) of
-        (_, Number 0) -> Number 1
-        (lhs, Number 1) -> lhs
-        (Number 1, _) -> Number 1
-        (lhs, rhs) -> Pow lhs rhs
+    (_, Number 0) -> Number 1
+    (lhs, Number 1) -> lhs
+    (Number 1, _) -> Number 1
+    (lhs, rhs) -> Pow lhs rhs
 simplify x = x
 
 simplifyRegressCases = map (\(c, a) -> (simplify c, a)) cases

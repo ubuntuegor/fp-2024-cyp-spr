@@ -1,15 +1,26 @@
+{-# LANGUAGE InstanceSigs #-}
+
 module Logger where 
 
 data Logger l a = Logger [l] a deriving (Show, Eq)
 
 -- Implement the instance and prove the laws
 instance Functor (Logger l) where 
+  fmap :: (a -> b) -> Logger l a -> Logger l b
+  fmap f (Logger log x) = Logger log $ f x
 
 -- Implement the instance and prove the laws
 instance Applicative (Logger l) where 
+  pure :: a -> Logger l a
+  pure = Logger []
+  (<*>) :: Logger l (a -> b) -> Logger l a -> Logger l b
+  (<*>) (Logger log1 f) (Logger log2 x) = Logger (log1 ++ log2) (f x)
 
 -- Implement the instance and prove the laws
 instance Monad (Logger l) where 
+  (>>=) :: Logger l a -> (a -> Logger l b) -> Logger l b
+  (>>=) (Logger log1 x) f = case f x of
+    Logger log2 y -> Logger (log1 ++ log2) y
 
 -- Writes a single log message. 
 -- Can be easily bound together with other logging computations.

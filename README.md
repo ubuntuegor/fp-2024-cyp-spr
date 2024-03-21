@@ -39,3 +39,5 @@
    * If there are any errors, try to be as descriptive as possible when reporting them. 
 
 Don't forget about tests in the first two tasks. 
+
+[Recordings](https://drive.google.com/drive/folders/1pyjVXqhJSmtBl53eSdeSayvOi61Xtdk8?usp=sharing)

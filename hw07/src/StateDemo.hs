@@ -1,5 +1,5 @@
 {-# LANGUAGE InstanceSigs #-}
-module StateDemo where
+module StateDemo (State, execState, get, modify) where
 
 import Control.Monad ( replicateM )
 

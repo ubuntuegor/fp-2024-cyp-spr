@@ -18,7 +18,9 @@ rotateTestCases =
     ((0, "abcdef"), "abcdef"),
     ((6, "abcdef"), "abcdef"),
     ((8, "abcdef"), "cdefab"),
-    ((-8, "abcdef"), "efabcd")
+    ((-8, "abcdef"), "efabcd"),
+    ((3, []), []),
+    ((9, cycle "abcdef"), cycle "defabc")
   ]
 
-testRotate = all (\((n, xs), expected) -> rotate n xs == expected) rotateTestCases
+testRotate = all (\((n, xs), expected) -> take 100 (rotate n xs) == take 100 expected) rotateTestCases

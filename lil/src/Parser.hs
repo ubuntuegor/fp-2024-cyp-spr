@@ -21,19 +21,19 @@ import Text.Megaparsec.Char (alphaNumChar, letterChar, space1)
 import qualified Text.Megaparsec.Char.Lexer as L
 
 data Op = Add | Sub | Mul | Div | Mod | Eq | Ne | Gt | Ge | Lt | Le | And | Or
-  deriving (Show)
+  deriving (Show, Eq)
 
 data Expr = Const Int | Var String | Binop Op Expr Expr | Call String [Expr]
-  deriving (Show)
+  deriving (Show, Eq)
 
 data Stmt = Asgn String Expr | Expr' Expr | Write Expr | Read String | While Expr Stmt | If Expr Stmt (Maybe Stmt) | Skip | Seq [Stmt]
-  deriving (Show)
+  deriving (Show, Eq)
 
 data Func = Func String [String] Stmt
-  deriving (Show)
+  deriving (Show, Eq)
 
 data Program = Program [Func] Stmt
-  deriving (Show)
+  deriving (Show, Eq)
 
 type Parser = Parsec Void String
 

@@ -1,9 +1,19 @@
-module Interpreter where
+module Interpreter (evalProgram, Env (Env)) where
 
 import Control.Monad.Except
-import Control.Monad.State
+  ( ExceptT,
+    MonadError (throwError),
+    MonadIO (liftIO),
+  )
+import Control.Monad.State (StateT, gets, modify)
 import Data.List (find)
 import Parser
+  ( Expr (..),
+    Func (..),
+    Op (..),
+    Program (Program),
+    Stmt (..),
+  )
 import System.IO (Handle, hPrint)
 
 data Env = Env {funcs :: [Func], vars :: [(String, Int)], handle :: Handle}

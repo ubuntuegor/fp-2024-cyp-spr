@@ -1,13 +1,23 @@
 module Main (main) where
 
-import Control.Monad.Except
-import Control.Monad.State
-import Interpreter (Env (Env), evalProgram)
 import Options.Applicative
-import Parser (Program, parseProgram)
+    ( optional,
+      (<**>),
+      fullDesc,
+      help,
+      info,
+      long,
+      metavar,
+      progDesc,
+      short,
+      strOption,
+      execParser,
+      helper,
+      Parser,
+      ParserInfo )
+import Runner (interpret)
 import System.Exit (die)
-import System.IO (Handle, IOMode (WriteMode), stdout, withFile)
-import Text.Megaparsec
+import System.IO (IOMode (WriteMode), stdout, withFile)
 
 data Options = Options
   { inputFile :: FilePath,
@@ -18,43 +28,35 @@ options :: Parser Options
 options =
   Options
     <$> strOption
-      ( metavar "INPUT_FILE"
-          <> help "Program file"
-          <> short 'i'
+      ( short 'i'
           <> long "input"
+          <> metavar "INPUT_FILE"
+          <> help "Program file"
       )
     <*> optional
       ( strOption
-          ( long "output"
-              <> short 'o'
+          ( short 'o'
+              <> long "output"
               <> metavar "OUTPUT_FILE"
               <> help "Write output to file instead of stdout"
           )
       )
 
-opts :: ParserInfo Options
-opts = info (options <**> helper) (fullDesc <> progDesc "Execute a program")
+optionsParser :: ParserInfo Options
+optionsParser = info (options <**> helper) (fullDesc <> progDesc "Execute a program in L language")
 
 main :: IO ()
-main = execParser opts >>= run
+main = execParser optionsParser >>= run
 
 run :: Options -> IO ()
-run opt@(Options input _) = do
-  code <- readFile input
-  let result = runParser parseProgram (show input) code
-  case result of
-    Left err -> putStrLn $ errorBundlePretty err
-    Right program -> runWithOutput opt program
-
-runWithOutput :: Options -> Program -> IO ()
-runWithOutput (Options _ output) program = do
-  case output of
-    Just path -> withFile path WriteMode (runProgram program)
-    Nothing -> runProgram program stdout
-
-runProgram :: Program -> Handle -> IO ()
-runProgram program handle = do
-  result <- evalStateT (runExceptT $ evalProgram program) (Env [] [] handle)
+run opts = do
+  code <- readFile $ inputFile opts
+  result <- withHandle $ interpret code (show $ inputFile opts)
   case result of
     Right _ -> return ()
     Left err -> die err
+  where
+    withHandle f =
+      case outputFile opts of
+        Just path -> withFile path WriteMode f
+        Nothing -> f stdout

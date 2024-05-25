@@ -1,4 +1,4 @@
-module Parser where
+module Parser (parseProgram, Op (..), Expr (..), Stmt (..), Func (..), Program (..)) where
 
 import Control.Monad.Combinators.Expr
   ( Operator (InfixL),

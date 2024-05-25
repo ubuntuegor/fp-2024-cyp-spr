@@ -26,7 +26,7 @@ data Op = Add | Sub | Mul | Div | Mod | Eq | Ne | Gt | Ge | Lt | Le | And | Or
 data Expr = Const Int | Var String | Binop Op Expr Expr | Call String [Expr]
   deriving (Show)
 
-data Stmt = Asgn String Expr | Expr' Expr | Write Expr | Read String | While Expr Stmt | If Expr Stmt (Maybe Stmt) | Skip | Seq Stmt Stmt
+data Stmt = Asgn String Expr | Expr' Expr | Write Expr | Read String | While Expr Stmt | If Expr Stmt (Maybe Stmt) | Skip | Seq [Stmt]
   deriving (Show)
 
 data Func = Func String [String] Stmt
@@ -135,7 +135,7 @@ parseSkip = Skip <$ symbol "skip"
 
 parseStmt :: Parser Stmt
 parseStmt =
-  foldl Seq Skip
+  Seq
     <$> sepBy
       ( choice
           [ parseAsgn,

@@ -101,7 +101,7 @@ evalStmt stmt =
           Just elseBody' -> evalStmt elseBody'
           Nothing -> return 0
     Skip -> return 0
-    Seq stmt1 stmt2 -> evalStmt stmt1 *> evalStmt stmt2
+    Seq stmts -> foldl (*>) (return 0) $ map evalStmt stmts
   where
     runWhile cond body = do
       condValue <- evalExpr cond
